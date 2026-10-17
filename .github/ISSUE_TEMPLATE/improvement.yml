@@ -1,0 +1,30 @@
+name: 改善・機能追加
+description: 既存の改善・新機能を1つ起票する
+labels: ["improve"]
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: 概要
+      description: 何をどう良くしたいか。今どうなっていて何が困るのか。1つのissueにつき1つだけ書く。画面のスクリーンショットやログがあれば貼る
+      placeholder: "例）見送った出来事を、判断の記録の一覧からも取り消せるようにしたい。今は出来事の画面まで戻らないと取り消せない"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: 優先度
+      options:
+        - 高（デモ・リリースの前に必要）
+        - 中（できれば入れたい）
+        - 低（余裕があれば）
+      default: 1
+    validations:
+      required: true
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: 補足
+      description: 案、参考リンク、関連するissue・PR、気づいた制約など（任意）

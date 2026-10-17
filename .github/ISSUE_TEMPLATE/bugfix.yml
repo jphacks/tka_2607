@@ -1,0 +1,58 @@
+name: バグ修正
+description: 動かない・おかしい動きを1つ起票する
+labels: ["bugfix"]
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: 概要
+      description: 何が起きたか。エラーメッセージ、画面のスクリーンショット、ログがあれば貼る
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: 再現手順
+      description: 同じことが起きるまでの操作を順番に書く
+      value: |
+        1.
+        2.
+        3.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: 期待する動作と実際の動作
+      value: |
+        期待:
+        実際:
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: 優先度
+      options:
+        - 高（デモ・リリースの前に必要）
+        - 中（できれば直したい）
+        - 低（余裕があれば）
+      default: 1
+    validations:
+      required: true
+
+  - type: textarea
+    id: env
+    attributes:
+      label: 環境
+      description: OS、ブラウザ、AI_PROVIDER（claude_code / api / mock）、ジャッジニアのバージョン（git log -1 --oneline）など
+      placeholder: "例）macOS 15 / Chrome / AI_PROVIDER=claude_code"
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: 補足
+      description: 原因の心当たり、関連するissue・PRなど（任意）
