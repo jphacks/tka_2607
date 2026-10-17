@@ -15,3 +15,5 @@ dist-ssr
 *.db
 *.db-shm
 *.db-wal
+# 実行時データ（検査対象のコピーなど）
+data/
