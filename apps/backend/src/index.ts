@@ -1,3 +1,4 @@
+import "./db"; // 起動時にマイグレーションを確実に流す
 import app from "./app";
 
 export default {

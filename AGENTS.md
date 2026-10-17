@@ -68,6 +68,8 @@ PATH=/tmp/npm-shim:$PATH bunx --bun starwind@latest add button -y
 
 ## バックエンド
 
-- DB は SQLite。ファイルは `DATABASE_URL`（既定 `./data/app.db`）。`*.db` はコミットしない。
+- DB は SQLite。ファイルは `DATABASE_URL`（既定 `<DATA_DIR>/app.db`、つまり `data/app.db`）。起動時にマイグレーション（`apps/backend/drizzle`）を自動で流す。`*.db` はコミットしない。
 - マイグレーション: `bun run db:generate` → `bun run db:migrate`（`apps/backend` で実行）。
-- テストは `bun test`（`apps/backend/src/*.test.ts`）。
+- テストは `bun test`（`apps/backend/test/` 配下。`src/` の構成を写す。環境変数は `test/setup.ts` で固定）。`bunfig.toml` の preload（`src/test-setup.ts`）が `DATABASE_URL=:memory:`・一時の `DATA_DIR`・`TARGET_DIR=samples/a_company_api` を設定する。AI は `setAI` で偽物に差し替え、実際の `claude` は呼ばない。
+- 検査対象は `TARGET_DIR`（既定はこのリポジトリの親フォルダ）。登録時に `DATA_DIR/projects/<id>/src` へスナップショットし、修正は `current/` にだけ入れる（元のファイルは変えない）。
+- デモ用の題材は `samples/`。`TARGET_DIR=./samples/a_company_api bun run dev` で検査対象にできる。
