@@ -60,6 +60,9 @@ bun run format       # lint と format の自動修正（Biome）
 
 * 開発時、フロントの `/api` はバックエンドへプロキシされる。
 * バックエンドの環境変数は `apps/backend/.env.example` を参照（`PORT`、`DATABASE_URL`）。
+* 検査対象は環境変数 `TARGET_DIR`（既定はこのリポジトリの親フォルダ）。検査対象のプロダクトの中にこのリポジトリを置いて使う。
+* デモ用の題材が `samples/` にある。`TARGET_DIR=./samples/a_company_api bun run dev` で試せる。
+* 修正は検査対象のコピー（`data/projects/<id>/current`）にだけ入り、元のファイルは変わらない。
 * VS Code では拡張機能「Biome」（`biomejs.biome`）を入れると、保存時に lint と format が自動で走る。
 
 詳しい開発ルールは [AGENTS.md](./AGENTS.md) を参照。
