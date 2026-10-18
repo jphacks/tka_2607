@@ -1,4 +1,3 @@
-import { Card, CardContent } from "#/components/starwind/card";
 import type { Fix } from "#/lib/types";
 import { ArchDiagram } from "./ArchDiagram";
 import { DiffView } from "./DiffView";
@@ -19,33 +18,7 @@ function archChanged(fix: Fix): boolean {
   return before.size !== after.size || [...before].some((k) => !after.has(k));
 }
 
-function Stat({
-  value,
-  label,
-  tone,
-}: {
-  value: number;
-  label: string;
-  tone: "good" | "bad";
-}) {
-  const color =
-    value === 0
-      ? ""
-      : tone === "good"
-        ? "text-green-700 dark:text-green-400"
-        : "text-error";
-  return (
-    <Card size="sm">
-      <CardContent className={`flex items-baseline gap-2 ${color}`}>
-        <b className="text-2xl tabular-nums">{value}</b>
-        <span className="text-sm">{label}</span>
-      </CardContent>
-    </Card>
-  );
-}
-
 export function FixView({ fix }: { fix: Fix }) {
-  const count = (e: string) => fix.effects.filter((x) => x.effect === e).length;
   const changed = archChanged(fix);
 
   return (
@@ -83,24 +56,7 @@ export function FixView({ fix }: { fix: Fix }) {
       )}
 
       <h3 className="text-sm font-semibold">この先の運用への影響</h3>
-      <div className="grid grid-cols-2 gap-3">
-        <Stat
-          value={count("prevented")}
-          label="件の出来事が起きなくなる"
-          tone="good"
-        />
-        <Stat
-          value={count("reduced")}
-          label="件の影響が小さくなる"
-          tone="good"
-        />
-        <Stat value={count("worse")} label="件の影響が大きくなる" tone="bad" />
-        <Stat
-          value={fix.new_issue_ids.length}
-          label="件の出来事が新しく起きる"
-          tone="bad"
-        />
-      </div>
+      {/* 起きなくなる・新しく起きる出来事の件数は、先のネタバレになるので出さない */}
       <p className="text-sm text-muted-foreground">
         どの出来事がどう変わったかは、運用を再開して、その日になるとわかります。シークバーに「回避」や新しい出来事として現れます。
       </p>

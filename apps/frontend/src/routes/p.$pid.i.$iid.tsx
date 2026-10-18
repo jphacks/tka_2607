@@ -3,6 +3,7 @@ import {
   IconBulb,
   IconPlayerPlayFilled,
   IconSend,
+  IconSparkles,
 } from "@tabler/icons-react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import {
@@ -39,13 +40,17 @@ export const Route = createFileRoute("/p/$pid/i/$iid")({
   component: IssueRoute,
 });
 
-const STEPS = ["調べる", "決める", "直す", "振り返る"];
+// 「直す」は反映を待つだけで若手の操作がないので、「決める」とまとめて1つのステップにしている
+const STEPS = ["調べる", "決めて直す", "振り返る"];
 
 type Tab = "code" | "infra" | "log" | "fix";
 type Busy = "" | "start" | "chat" | "hint" | "commit" | "skip";
 
 const TAB_CLASS =
   "grow-0 rounded-none border-0 border-b-2 border-transparent px-3.5 py-2 text-sub data-[state=active]:border-primary data-[state=active]:text-foreground data-[state=active]:shadow-none";
+// 修正の結果のタブは、選んでいてもいなくても緑で目立たせる（Starwind の既定の文字色やダーク時の色も上書きする）
+const FIX_TAB_CLASS =
+  "grow-0 rounded-none border-0 border-b-2 border-transparent px-3.5 py-2 font-medium text-primary data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:shadow-none dark:text-primary";
 const TAB_COUNT =
   "rounded-lg bg-line-soft px-1.5 text-[11px] font-normal text-sub";
 
@@ -142,17 +147,17 @@ function DetailGate({
 }
 
 function stepOf(i: Issue, busy: Busy): number {
-  if (busy === "commit") return 2;
+  if (busy === "commit") return 1;
   switch (i.phase) {
     case "decide":
     case "ready":
       return 1;
     case "reflect":
-      return 3;
+      return 2;
     case "done":
-      return 4;
+      return 3;
     default:
-      return i.fix ? 3 : 0;
+      return i.fix ? 2 : 0;
   }
 }
 
@@ -162,8 +167,8 @@ function stepStarts(i: Issue): (number | null)[] {
   return [
     i.chat.length > 0 ? 0 : null,
     i.decide_at ?? null,
+    // 「修正を反映しました」のカードから振り返りが始まる
     fix >= 0 ? fix : null,
-    fix >= 0 ? Math.min(fix + 1, i.chat.length - 1) : null,
   ];
 }
 
@@ -184,10 +189,10 @@ function IssuePage({
   const [plan, setPlan] = useState(initial.plan_draft?.plan ?? "");
   const [busy, setBusy] = useState<Busy>("");
   const [error, setError] = useState("");
+  // 修正の結果が一番見てほしいところなので、あればそれを最初に開く
   const [tab, setTab] = useState<Tab>(
-    initial.view === "infra" ? "infra" : "code",
+    initial.fix ? "fix" : initial.view === "infra" ? "infra" : "code",
   );
-  const endRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
   const [awayFromEnd, setAwayFromEnd] = useState(false);
   // 会話を遡って見ているステップ。最新を見ているとき（今のステップ）は null
@@ -297,9 +302,12 @@ function IssuePage({
     setPlan(issue.plan_draft?.plan ?? "");
   }, [issue.plan_draft?.plan]);
 
+  // 発言が増えたら、会話欄の中だけを最新までスクロールする。
+  // scrollIntoView だとページ全体もスクロールし、会話欄が sticky なので、ページの一番上に飛ばされてしまう
   // biome-ignore lint/correctness/useExhaustiveDependencies: 発言の数と待ち状態が変わったときだけ動かす
   useEffect(() => {
-    endRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+    const list = listRef.current;
+    list?.scrollTo({ top: list.scrollHeight, behavior: "smooth" });
   }, [issue.chat.length, busy]);
 
   const run = async (kind: Busy, fn: () => Promise<void>) => {
@@ -345,6 +353,7 @@ function IssuePage({
       );
       setIssue(r.issue);
       onProject(r.project);
+      setTab("fix");
     });
 
   const skip = (reason: string) =>
@@ -482,7 +491,11 @@ function IssuePage({
       <div
         className={`grid items-start gap-6 ${showChat ? "lg:grid-cols-[minmax(0,1.15fr)_minmax(22rem,1fr)]" : ""}`}
       >
-        <section className="grid min-w-0 gap-4" aria-label="根拠">
+        {/* 中の列も最小幅 0 にする。auto のままだと長いコード行の幅まで広がり、右の会話欄の下にはみ出す */}
+        <section
+          className="grid min-w-0 grid-cols-[minmax(0,1fr)] gap-4"
+          aria-label="根拠"
+        >
           <Tabs value={tab} onValueChange={(v) => setTab(v as Tab)}>
             <TabsList className="w-full justify-start gap-1 rounded-none border-b bg-transparent p-0">
               <TabsTrigger value="code" className={TAB_CLASS}>
@@ -497,8 +510,15 @@ function IssuePage({
                 <span className={TAB_COUNT}>{issue.signals.length}</span>
               </TabsTrigger>
               {issue.fix && (
-                <TabsTrigger value="fix" className={TAB_CLASS}>
+                <TabsTrigger value="fix" className={FIX_TAB_CLASS}>
+                  <IconSparkles className="size-4" />
                   修正の結果
+                  {tab !== "fix" && (
+                    <span aria-hidden className="relative flex size-2">
+                      <span className="absolute inline-flex size-full rounded-full bg-primary opacity-60 motion-safe:animate-ping" />
+                      <span className="relative inline-flex size-2 rounded-full bg-primary" />
+                    </span>
+                  )}
                 </TabsTrigger>
               )}
             </TabsList>
@@ -586,7 +606,7 @@ function IssuePage({
                 aria-hidden
                 className="pointer-events-none absolute top-3 bottom-3 left-3 rounded-full bg-primary transition-[transform,opacity] duration-500 ease-in-out"
                 style={{
-                  width: "calc((100% - 1.5rem - 1.125rem) / 4)",
+                  width: `calc((100% - 1.5rem - ${(STEPS.length - 1) * 0.375}rem) / ${STEPS.length})`,
                   transform: `translateX(calc(${shown} * (100% + 0.375rem)))`,
                   opacity: shown < STEPS.length ? 1 : 0,
                 }}
@@ -651,7 +671,6 @@ function IssuePage({
                     <p className="text-sm">{issue.lesson}</p>
                   </div>
                 )}
-                <div ref={endRef} />
               </div>
               {awayFromEnd && (
                 <Button

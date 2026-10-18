@@ -252,8 +252,21 @@ export function ArchDiagram({
                 className={`text-[11px] ${isBad ? "fill-error font-medium" : "fill-muted-foreground"}`}
               >
                 {KIND_LABEL[n.kind]}
-                {isBad ? "・影響あり" : ""}
               </text>
+              {/* 「影響あり」は箱の右上に札として重ねる（種類の横に並べると、狭い箱からはみ出す） */}
+              {isBad && (
+                <g transform={`translate(${b.w - 58},-9)`}>
+                  <rect width={52} height={18} rx={9} className="fill-error" />
+                  <text
+                    x={26}
+                    y={12.5}
+                    textAnchor="middle"
+                    className="fill-white text-[10.5px] font-bold"
+                  >
+                    影響あり
+                  </text>
+                </g>
+              )}
               <text x={12} y={38} className="fill-foreground text-sm font-bold">
                 {fitLabel(shortLabel(n.label), b.w)}
               </text>
