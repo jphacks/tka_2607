@@ -42,6 +42,7 @@ judgineer load
 使い終わったら`judgineer stop`で止められます。
 
 ## 目次
+- [すぐに試す](#すぐに試す)
 - [製品概要](#製品概要)
   - [背景](#背景製品開発のきっかけ課題等)
   - [製品説明](#製品説明具体的な製品の説明)
@@ -51,6 +52,7 @@ judgineer load
   - [今後の展望](#今後の展望)
   - [力を入れたこと](#力を入れたことこだわり等)
 - [開発技術](#開発技術)
+- [開発者向けセットアップ](#開発者向けセットアップ)
 
 ## 製品概要
 **運用 × Tech**：自分のアプリの公開後を先に体験し、起きた問題を根拠を持って自分で判断して直す、運用の練習場所です。
@@ -312,13 +314,21 @@ flowchart LR
 * 独自で開発したものの内容をこちらに記載してください
 * 特に力を入れた部分をファイルリンク、またはcommit_idを記載してください。
 
-## Install
-```sh
-curl -fsSL https://raw.githubusercontent.com/jphacks/tka_2607/main/install.sh | bash
-```
-Linux / macOS / Windows（Git Bash から実行）に対応。`~/.judgineer` に置かれ、`judgineer` コマンドが使えるようになる。AI の機能には Claude Code（`claude`）が必要。
+## 開発者向けセットアップ
+アプリを使うだけなら、[すぐに試す](#すぐに試す)の手順で十分です。ここは、このリポジトリを手元で動かして開発する人向けです。
 
-### コマンド
+### 必要なもの
+* [Bun](https://bun.com/) 1.4 以上（Node.js / pnpm は不要）
+* Claude Code（`claude` コマンド）。AI の機能に使うので、インストールしてログインしておく
+
+### 構成
+```
+apps/frontend    TanStack Start (SPA) + React + Starwind UI   http://localhost:3000
+apps/backend     Hono + Drizzle (bun:sqlite)                  http://127.0.0.1:3001
+packages/shared  zod スキーマ（フロント・バック共有）
+```
+
+### 開発用コマンド
 ```sh
 bun install          # 依存関係のインストール
 bun run dev          # frontend と backend を同時に起動
@@ -329,22 +339,23 @@ bun run check        # lint と format の検査（Biome）
 bun run format       # lint と format の自動修正（Biome）
 ```
 
-## 開発者向けセットアップ
-### 構成
-```
-apps/frontend    TanStack Start (SPA) + React + Starwind UI   http://localhost:3000
-apps/backend     Hono + Drizzle (bun:sqlite)                  http://127.0.0.1:3001
-packages/shared  zod スキーマ（フロント・バック共有）
-```
-
-### 必要なもの
-* [Bun](https://bun.com/) 1.4 以上（Node.js / pnpm は不要）
-
 * 開発時、フロントの `/api` はバックエンドへプロキシされる。
-* バックエンドの環境変数は `apps/backend/.env.example` を参照（`PORT`、`DATABASE_URL`）。
-* 開発時は、起動時に環境変数 `TARGET_DIR`（既定は `samples/a_company_api`）を検査対象の一覧へ足す。デモ用の題材が `samples/` にあるので、そのまま `bun run dev` すると試せる。
+* 起動時に、環境変数 `TARGET_DIR`（既定は `samples/a_company_api`）を検査対象の一覧へ足す。デモ用の題材が `samples/` にあるので、そのまま `bun run dev` すると試せる。
 * 修正は検査対象のコピー（`data/projects/<id>/current`）にだけ入り、元のファイルは変わらない。
 * VS Code では拡張機能「Biome」（`biomejs.biome`）を入れると、保存時に lint と format が自動で走る。
+
+### 環境変数
+`apps/backend/.env.example` をコピーして `apps/backend/.env` を作ると変えられる。どれも省略してよい。
+
+| 変数 | 既定 | 内容 |
+|---|---|---|
+| `PORT` | `3001` | バックエンドのポート |
+| `TARGET_DIR` | `samples/a_company_api` | 起動時に一覧へ足す検査対象のフォルダ。相対パスは `apps/backend` が基準。ホームフォルダと `/` は指定できない |
+| `DATA_DIR` | `<リポジトリルート>/data` | 検査対象のコピーや解析結果を置く場所 |
+| `DATABASE_URL` | `<DATA_DIR>/app.db` | SQLite のファイル。`:memory:` も使える |
+| `CLAUDE_BIN` | `claude` | 呼び出す Claude Code のコマンド |
+| `CLAUDE_MODEL` | `sonnet` | Claude Code に使わせるモデル |
+| `AI_TIMEOUT` | `600` | AI を呼び出すときのタイムアウト（秒） |
 
 ### judgineer コマンド（単体バイナリ）
 `bun run build && bun run build:binary` で `dist-bin/` に OS ごとの単体バイナリを作れる。
