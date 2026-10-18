@@ -1,10 +1,10 @@
 # ジャッジニア（Judgineer）
 
-<img src="docs/images/home.png" alt="ジャッジニアのホーム画面" width="800">
+[<img src="docs/images/home.png" alt="ジャッジニアのホーム画面（クリックするとデモ動画が開きます）" width="800">](https://youtu.be/Xkc3gpJLOJ4)
 
 AIが当たり前の時代に、根拠を持って判断できるエンジニアになるための経験を積むプロダクト。
 
-- デモ動画：[judgineer-demo.mp4](docs/videos/judgineer-demo.mp4)
+- デモ動画：[YouTube](https://youtu.be/Xkc3gpJLOJ4)
 - 説明スライド：[judgineer-slides.pdf](docs/judgineer-slides.pdf)
 
 ## すぐに試す
