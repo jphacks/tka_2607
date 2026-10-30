@@ -39,12 +39,12 @@ jobs:
         if: env.REACT_PATH != ''
         run: echo "id=$(gh api -X POST "repos/$GITHUB_REPOSITORY/$REACT_PATH/reactions" -f content=eyes --jq .id)" >> "$GITHUB_OUTPUT"
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 1
 
       # PR のコードを権限付きで実行しないよう、bun run / install は許可しない。検査は ci.yml が PR 上で行う
-      - uses: anthropics/claude-code-action@f27be6b65a4652f08a2ba3cff79114829b588967 # v1
+      - uses: anthropics/claude-code-action@d70510b174a1244958df0b03166a54912811f3e6 # v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
