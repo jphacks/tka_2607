@@ -13,7 +13,7 @@
     "postinstall": "node scripts/install-starwind.mjs"
   },
   "dependencies": {
-    "@dagrejs/dagre": "1.1.8",
+    "@dagrejs/dagre": "3.1.3",
     "@starwind-ui/react": "1.3.0",
     "@tabler/icons-react": "^3.37.1",
     "@tailwindcss/forms": "^0.5",
