@@ -14,15 +14,15 @@
   },
   "dependencies": {
     "@dagrejs/dagre": "1.1.8",
-    "@starwind-ui/react": "1.3.0",
-    "@tabler/icons-react": "^3.37.1",
+    "@starwind-ui/react": "1.4.0",
+    "@tabler/icons-react": "^3.50.0",
     "@tailwindcss/forms": "^0.5",
     "@tailwindcss/vite": "^4",
-    "@tanstack/react-router": "1.170.45",
-    "@tanstack/react-start": "1.169.3",
+    "@tanstack/react-router": "1.170.46",
+    "@tanstack/react-start": "1.169.4",
     "@tka/backend": "workspace:*",
     "@tka/shared": "workspace:*",
-    "hono": "^4.13.13",
+    "hono": "^4.13.14",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "tailwind-merge": "^3",
@@ -31,13 +31,13 @@
     "tw-animate-css": "^1"
   },
   "devDependencies": {
-    "@tanstack/router-cli": "^1.167.45",
+    "@tanstack/router-cli": "^1.167.46",
     "@types/node": "^22.10.2",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
     "@vitejs/plugin-react": "^6.0.1",
-    "starwind": "3.4.0",
+    "starwind": "3.4.1",
     "typescript": "^6.0.2",
-    "vite": "^8.0.0"
+    "vite": "^8.3.5"
   }
 }
